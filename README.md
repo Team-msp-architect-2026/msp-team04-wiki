@@ -50,48 +50,12 @@
  
 ## 🏗️ 시스템 아키텍처
  
-```mermaid
-flowchart LR
-    User[👨‍👩‍👧 부모 사용자] -->|HTTPS| CF[CloudFront CDN]
-    CF --> RN[React Native App\nExpo]
-    RN -->|REST API + JWT| ALB[ALB / Ingress]
+<img width="1080" height="1076" alt="image" src="https://github.com/user-attachments/assets/d93258f0-f23c-4df4-9802-6d741162fb70" />
+
  
-    subgraph VPC["AWS VPC (3계층 격리)"]
-        subgraph Public["Public Subnet"]
-            ALB
-        end
-        subgraph PrivateApp["Private App Subnet"]
-            ALB --> EKS[EKS Cluster\nHPA 오토스케일링]
-            EKS --> SB[Spring Boot API]
-            EKS --> Batch[Spring Batch\n공공데이터 수집]
-        end
-        subgraph PrivateData["Private Data Subnet"]
-            SB --> RDS[(RDS PostgreSQL\nMulti-AZ)]
-            SB --> Redis[(ElastiCache Redis\n분산 락)]
-        end
-    end
- 
-    SB --> S3[S3]
-    SB --> SQS[SQS + DLQ]
-    SQS --> SNS[AWS SNS\n푸시 알림]
-    Batch --> S3
-    S3 --> Lambda[Lambda + EventBridge\n공공데이터 파이프라인]
-    SB --> BQ[GCP BigQuery\n교육비 통계]
- 
-    subgraph External["외부 API"]
-        KMap[카카오맵 API]
-        KAuth[카카오 OAuth 2.0]
-        Pay[카카오페이 / 토스페이먼츠]
-        OpenData[공공데이터 포털\nNEIS · 어린이집 · 복지로 등]
-    end
- 
-    RN --> KMap
-    RN --> KAuth
-    RN --> Pay
-    Batch --> OpenData
-```
- 
-> 📖 상세 아키텍처는 [Wiki — 시스템 아키텍처](../../wiki/10-시스템-아키텍처) 참조
+<br>
+
+> 📖 상세 아키텍처는 [Wiki — 시스템 아키텍처](https://github.com/Team-msp-architect-2026/msp-team04-wiki/wiki/Infra%E2%80%90Architected%E2%80%90Framework) 참조
  
 ---
  
