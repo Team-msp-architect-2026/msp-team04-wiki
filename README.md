@@ -50,7 +50,8 @@
  
 ## 🏗️ 시스템 아키텍처
  
-<img width="1080" height="1076" alt="image" src="https://github.com/user-attachments/assets/d93258f0-f23c-4df4-9802-6d741162fb70" />
+<img width="2967" height="3070" alt="KakaoTalk_20260520_111410723" src="https://github.com/user-attachments/assets/51ea7d34-a37e-4ae3-bc6a-2f5d8d882090" />
+
 
  
 <br>
