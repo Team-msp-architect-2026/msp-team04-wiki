@@ -50,7 +50,8 @@
  
 ## 🏗️ 시스템 아키텍처
  
-<img width="2967" height="3070" alt="KakaoTalk_20260520_111410723" src="https://github.com/user-attachments/assets/51ea7d34-a37e-4ae3-bc6a-2f5d8d882090" />
+<img width="2967" height="3390" alt="MoMent_아키텍처_최종본" src="https://github.com/user-attachments/assets/0210f23b-3180-4358-a238-d7f3033ec630" />
+
 
 
  
@@ -61,17 +62,19 @@
 ---
  
 ## 🛠️ 기술 스택
- 
-| 계층 | 기술 |
-|------|------|
-| **Frontend** | React Native · Expo · 카카오맵 SDK · 카카오 OAuth 2.0 |
-| **Backend** | Spring Boot (Java) · JPA · QueryDSL · Spring Security · Spring Batch |
-| **AI / LLM** | OpenAI API (또는 Gemini) · Prompt Engineering · Redis Cache (LLM 응답 캐싱) |
-| **Database** | RDS PostgreSQL Multi-AZ · ElastiCache Redis Cluster |
-| **Infra** | AWS EKS (HPA) · S3 · Lambda · EventBridge · CloudFront · SQS + DLQ · VPC 3계층 · GCP BigQuery |
-| **IaC** | Terraform (S3 Backend + DynamoDB State Lock) |
-| **CI/CD** | GitHub Actions · ArgoCD GitOps · ECR |
-| **Monitoring** | CloudWatch · Grafana · SNS → Slack · Locust 부하 테스트 |
+
+| 계층             | 기술                                                              |
+| -------------- | --------------------------------------------------------------- |
+| Client         | React Native, Expo, Kakao OAuth 2.0                             |
+| API Server     | Spring Boot, Java, JPA, QueryDSL, Spring Security               |
+| Batch / Data   | Spring Batch, 공공데이터 수집 파이프라인, S3, SQS, DLQ, EventBridge, Lambda |
+| AI             | OpenAI API, Prompt Engineering, Redis Cache                     |
+| Database       | Amazon RDS PostgreSQL, Amazon ElastiCache Redis                 |
+| Infrastructure | AWS EKS, HPA, ALB, CloudFront, VPC 3-Tier Architecture          |
+| IaC            | Terraform, S3 Remote Backend, DynamoDB State Lock               |
+| CI/CD          | GitHub Actions, Amazon ECR, ArgoCD GitOps                       |
+| Monitoring     | CloudWatch, Prometheus, Grafana, Locust                         |
+
  
 ---
  
@@ -81,9 +84,15 @@
 사용자가 자녀 나이, 지역, 예산, 관심 분야, 현재 고민을 입력하면  
 시스템은 이를 종합 분석하여 아이에게 적합한 교육·돌봄 프로그램, 정부 지원 혜택, 무료 공공 프로그램을 통합 추천한다.
 
+```text
+점수 = 예산/무료 여부 20%
+     + 연령 적합도 20%
+     + 관심 키워드 20%
+     + 수업 방식 15%
+     + 신청 가능 여부 15%
+     + 후기 만족도 10%
 ```
-점수 = 거리/지역 적합도 25% + 예산/무료 여부 20% + 연령 적합도 15% + 관심 키워드 15% + 수업 방식 10% + 신청 가능 여부 10% + 후기 만족도 5%
-```
+
  
 - 카카오맵 기반 추천 위치 시각화
 - 리스트/지도 동시 탐색 지원
@@ -142,18 +151,31 @@ AI 추천 도착, 정부 지원금 매칭, 모집 마감 임박, 신청 완료 �
 ---
  
 ## 🗂️ 연동 데이터 소스
+
+공공 교육·돌봄·복지 정보를 통합 제공하기 위해
+초기 서비스 범위에서는 실제 확보 가능한 공공데이터를 중심으로 데이터를 구성하였다.
  
-| 소스 | 방식 |
-|------|------|
-| NEIS 학원교습소정보 | Open API 자동 적재 |
-| 공공데이터포털 전국학원·교습소 | CSV 초기 적재 + NEIS API 보완 |
-| 어린이집정보공개포털 | Open API 자동 적재 |
-| 학교알리미 / 유치원알리미 | Open API 자동 적재 |
-| 서울 열린데이터광장 | Open API 자동 적재 |
-| 복지로 / 정부24 / 아이사랑 | 시드 DB + 링크아웃 |
-| 몽땅정보통 (서울시 육아지원) | 시드 DB + 링크아웃 |
-| 아이돌봄서비스 / 지역아동센터 | 반자동 시드 + 링크아웃 |
- 
+| 소스                | 활용 방식                                |
+| ----------------- | ------------------------------------ |
+| 정부24 보조금/혜택 데이터   | 시드 데이터 구축 및 혜택 정보 제공                 |
+| 복지로 지자체 복지서비스 데이터 | 시드 데이터 구축 및 지역별 복지 혜택 제공             |
+| 서울시 학원·교습소 데이터    | CSV 기반 초기 적재 및 교육 프로그램 데이터 구성        |
+| 공공데이터 기반 교육·돌봄 정보 | 카테고리, 지역, 대상 연령, 비용 조건 등을 기준으로 통합 정제 |
+
+### 향후 확장 예정 데이터
+
+아래 데이터는 서비스 확장 시 추가 연동을 고려한 데이터 소스이다.
+
+| 소스               | 활용 계획               |
+| ---------------- | ------------------- |
+| NEIS 학원교습소정보     | 전국 단위 학원·교습소 데이터 보완 |
+| 어린이집정보공개포털       | 어린이집 정보 연동          |
+| 학교알리미 / 유치원알리미   | 학교·유치원 정보 보완        |
+| 아이사랑             | 보육 관련 정보 보완         |
+| 몽땅정보통            | 서울시 육아지원 정보 보완      |
+| 아이돌봄서비스 / 지역아동센터 | 돌봄 서비스 정보 보완        |
+
+
 ---
  
 ## 🚀 빠른 시작
